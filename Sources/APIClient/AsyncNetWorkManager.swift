@@ -61,7 +61,7 @@ public class NetWorkClient<EndPoint: EndPointType>: Networkable {
     public func request(apiRouter: EndPoint) async throws -> Data  {
         
         let request = try self.requestBuilderType.buildRequest(from: apiRouter)
-
+        print(request.cURL)
         let (data, response) = try await self.request(apiRouter: apiRouter)
         
         try  NetWorkErrorHandler().findErrorIfany(from: response)

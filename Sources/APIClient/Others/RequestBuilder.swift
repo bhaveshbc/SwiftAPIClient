@@ -9,12 +9,14 @@ import Foundation
 
 
 public protocol RequestBuilderType {
-    func buildRequest(from route:EndPointType) throws -> URLRequest
+      func buildRequest(from route:EndPointType) throws -> URLRequest
 }
 
-public struct RequestBuilder<EndPoint: EndPointType> {
+public struct RequestBuilder<EndPoint: EndPointType>: RequestBuilderType {
     
-    public  func buildRequest(from route:EndPoint) throws -> URLRequest {
+    public init() { }
+    
+    public  func buildRequest(from route:EndPointType) throws -> URLRequest {
         guard let baseUrl = URL(string: route.domainName + route.path) else {
             throw NetworkError.missingURL
         }
