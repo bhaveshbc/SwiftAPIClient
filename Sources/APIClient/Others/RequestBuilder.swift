@@ -12,7 +12,7 @@ public protocol RequestBuilderType {
       func buildRequest(from route:EndPointType) throws -> URLRequest
 }
 
-public struct RequestBuilder<EndPoint: EndPointType>: RequestBuilderType {
+public struct RequestBuilder: RequestBuilderType {
     
     public init() { }
     

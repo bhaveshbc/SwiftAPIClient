@@ -15,24 +15,21 @@ extension URLSession: URLSessionProtocol {}
 public typealias SessionResponseType = (Data, URLResponse)
 
 public protocol Networkable: AnyObject {
-    associatedtype EndPoint: EndPointType
-    func request<T: Decodable>(apiRouter: EndPoint) async throws -> T
-    func request(apiRouter: EndPoint) async throws -> [String: Any]?
+    func request<T: Decodable>(request: URLRequest) async throws -> T
+    func request(request: URLRequest) async throws -> [String: Any]?
 }
 
-public class NetWorkClient<EndPoint: EndPointType>: Networkable {
+public class NetWorkClient: Networkable {
     
     public let session: URLSessionProtocol
-    public let requestBuilderType: RequestBuilderType
-
-    public init(session: URLSessionProtocol = URLSession.shared, requestBuilder: RequestBuilderType) {
+   
+    public init(session: URLSessionProtocol = URLSession.shared) {
         self.session = session
-        self.requestBuilderType = requestBuilder
     }
     
-    public func request(apiRouter: EndPoint) async throws -> [String: Any]? {
+    public func request(request: URLRequest) async throws -> [String: Any]? {
         do {
-            let data: Data = try await self.request(apiRouter: apiRouter)
+            let data: Data = try await self.request(request: request)
             let json = try JSONSerialization.jsonObject(with: data, options: [])
             return json as? [String: Any]
         } catch let error {
@@ -40,9 +37,9 @@ public class NetWorkClient<EndPoint: EndPointType>: Networkable {
         }
     }
 
-    public func request<T>(apiRouter: EndPoint) async throws -> T where T : Decodable {
+    public func request<T>(request: URLRequest) async throws -> T where T : Decodable {
         do {
-            let data: Data = try await self.request(apiRouter: apiRouter)
+            let data: Data = try await self.request(request: request)
             guard let decodedResponse = try? JSONDecoder().decode(T.self, from: data) else {
                 throw NetworkError.encodingFailed
             }
@@ -52,20 +49,14 @@ public class NetWorkClient<EndPoint: EndPointType>: Networkable {
         }
     }
     
-    public func request(apiRouter: EndPoint) async throws -> SessionResponseType  {
-        let request = try self.requestBuilderType.buildRequest(from: apiRouter)
+    public func request(request: URLRequest) async throws -> SessionResponseType  {
         let (data, response) = try await session.data(for: request)
         return (data, response)
     }
     
-    public func request(apiRouter: EndPoint) async throws -> Data  {
-        
-        let request = try self.requestBuilderType.buildRequest(from: apiRouter)
-        print(request.cURL)
-        let (data, response) = try await self.request(apiRouter: apiRouter)
-        
+    public func request(request: URLRequest) async throws -> Data  {
+        let (data, response) = try await self.request(request: request)
         try  NetWorkErrorHandler().findErrorIfany(from: response)
-        
         return data
     }
 }
