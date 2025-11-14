@@ -16,3 +16,9 @@ extension String {
     static let authorize = "Authorization"
     static let contentType = "Content-Type"
 }
+
+extension URLRequest {
+   public var curl: String {
+        self.cURL
+    }
+}

@@ -13,7 +13,7 @@ public protocol RequestBuilderType {
 }
 
 public struct RequestBuilder: RequestBuilderType {
-    
+  
     public init() { }
     
     public  func buildRequest(from route:EndPointType) throws -> URLRequest {
@@ -24,6 +24,7 @@ public struct RequestBuilder: RequestBuilderType {
         var request = URLRequest(url: baseUrl, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData, timeoutInterval: route.timeOutInterval)
         
         request.httpMethod = route.httpMethod.rawValue
+      
         
         do {
             switch route.task {
@@ -71,6 +72,5 @@ public struct RequestBuilder: RequestBuilderType {
             throw error
         }
     }
-    
     
 }
