@@ -14,7 +14,7 @@ public protocol URLSessionProtocol {
 extension URLSession: URLSessionProtocol {}
 public typealias SessionResponseType = (Data, URLResponse)
 
-public protocol Networkable: AnyObject {
+public protocol Networkable: AnyObject, Sendable {
     func request<T: Decodable>(request: URLRequest) async throws -> T
     func request(request: URLRequest) async throws -> [String: Any]?
 }
